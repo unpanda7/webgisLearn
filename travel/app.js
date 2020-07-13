@@ -46,7 +46,49 @@ function drawFootPoint(data) {
     let point = [p.latitude - 0, p.longitude - 0]
     L.marker(point, { icon: footIcon }).addTo(map)
       .bindPopup(
-        `<h3>${p['city']}</h3>${p['date']}<br>${p['remark']}<br>`
+        `<h3>${p['city']}</h3>${p['date']}<br>${p['remark']}<br>${generatePicHtml(p['imgs'])}`
       )
   })
+}
+
+/**
+ * 动态拼接html字符串
+ * @param {string} cityName 城市名称
+ * @param {*} imgs 足迹点数据中的imgs数组
+ */
+/**
+ * 动态拼接html字符串
+ * @param {*} imgs 足迹点数据中的imgs数组
+ */
+function generatePicHtml(imgs) {
+  // 动态拼接html字符串
+  var _html = '<div id="galley"><ul class="pictures"  onclick="viewPic()">';
+  // 循环图片数组，动态拼接项目的相对地址url
+  for (var i = 0; i < imgs.length; i++) {
+      var url = './data/pictures/' + imgs[i];
+      var display = 'style="display:inline-block"';
+      // 这里
+      if (i > 5) {
+          display = 'style="display:none"';
+      }
+      _html += '<li ' + display + '><img data-original="' + url + '" src="' + url + '" alt="图片预览"></li>';
+  }
+  _html += '</ul></div></div>';
+
+  return _html;
+}
+
+/**
+ * veiwerjs预览大图
+ */
+function viewPic() {
+
+  var galley = document.getElementById('galley');
+  var viewer = new Viewer(galley, {
+      url: 'data-original',
+      hidden: function () {
+          viewer.destroy();
+      }
+  });
+  viewer.show();
 }
